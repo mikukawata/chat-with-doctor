@@ -14,12 +14,12 @@ datasource db {
 }
 
 model message {
-  id      Int      @id @default(autoincrement())
+  id      Int    @id @default(autoincrement())
   message String
-  author  UserType
+  author  Author
 }
 
-enum UserType {
+enum Author {
   ADMIN
   BASIC
 }
