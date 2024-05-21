@@ -20,6 +20,6 @@ model message {
 }
 
 enum Author {
-  ADMIN
-  BASIC
+  DOCTOR
+  PATIENT
 }
