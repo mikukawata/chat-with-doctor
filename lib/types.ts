@@ -1,5 +1,10 @@
 export type MessageType = {
-  //   id: number;
-  message: string;
+  id: number;
+  content: string;
+  author: 'DOCTOR' | 'PATIENT';
+};
+
+export type ReqPostMessage = {
+  content: string;
   author: 'DOCTOR' | 'PATIENT';
 };

@@ -1,19 +1,22 @@
 'use client';
-import React, { useState } from 'react';
+import React, { FC, useState } from 'react';
 import Input from '../components/Input';
 import SwitchUser from './SwitchUser';
 import { MessageType } from '@/lib/types';
+import { postMessage } from '../actions/postMessage';
 
-const ChatList = () => {
-  const [message, setMessage] = useState<string>('');
-  const [messageList, setMessageList] = useState<MessageType[]>([]);
+type Props = {
+  messageList: MessageType[];
+};
+const ChatList: FC<Props> = ({ messageList }) => {
+  const [input, setInput] = useState<string>('');
   const [isDoctor, setIsDoctor] = useState<boolean>(false);
 
   // TODO: uuidつける
   const handleSubmit = () => {
     const author = isDoctor ? 'DOCTOR' : 'PATIENT';
-    setMessageList([...messageList, { message, author }]);
-    setMessage('');
+    postMessage({ content: input, author });
+    setInput('');
   };
 
   const handleSwitchUser = () => {
@@ -27,14 +30,19 @@ const ChatList = () => {
       </div>
       <div className='w-full py-7 px-8'>
         {messageList.length > 0 ? (
-          messageList.map((message, _i) => {
-            const className = message.author === 'DOCTOR' ? 'mr-auto border border-red-300' : 'ml-auto bg-red-300';
-            return <div className={`w-fit max-w-80 ${className} rounded-lg p-3 mb-3`}>{message.message}</div>;
+          messageList.map((message) => {
+            const { id, author, content } = message;
+            const className = author === 'DOCTOR' ? 'mr-auto border border-red-300' : 'ml-auto bg-red-300';
+            return (
+              <div key={id} className={`w-fit max-w-80 ${className} rounded-lg p-3 mb-3`}>
+                {content}
+              </div>
+            );
           })
         ) : (
           <div className='text-center py-8'>メッセージはありません</div>
         )}
-        <Input handleSubmit={handleSubmit} message={message} setMessage={setMessage} />
+        <Input handleSubmit={handleSubmit} input={input} setInput={setInput} />
       </div>
     </>
   );

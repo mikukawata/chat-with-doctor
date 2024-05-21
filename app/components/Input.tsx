@@ -3,15 +3,15 @@ import React, { FC } from 'react';
 
 type Props = {
   handleSubmit: () => void;
-  message: string;
-  setMessage: (value: string) => void;
+  input: string;
+  setInput: (value: string) => void;
 };
-const Input: FC<Props> = ({ handleSubmit, message, setMessage }) => {
+const Input: FC<Props> = ({ handleSubmit, input, setInput }) => {
   return (
     <div className='w-4/5 fixed bottom-3 inset-x-0 mx-auto flex justify-center items-center gap-3'>
       <input
-        onChange={(e) => setMessage(e.target.value)}
-        value={message}
+        onChange={(e) => setInput(e.target.value)}
+        value={input}
         type='text'
         className='inline-block w-4/5 p-2 text-gray-900 border border-gray-300 rounded-lg text-base focus:ring-blue-500 focus:border-blue-500'
       ></input>
