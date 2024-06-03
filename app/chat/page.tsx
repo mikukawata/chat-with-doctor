@@ -4,10 +4,10 @@ import { useRouter } from 'next/navigation';
 import React, { useEffect } from 'react';
 import ChatList from '../components/ChatList';
 import { supabaseBrowser } from '@/lib/supabese/browser';
-import { MessageType } from '@/lib/types';
+import { MessageType, ReqPostMessage } from '@/lib/types';
 import SignIn from '../components/SignIn';
 import { User } from '@supabase/supabase-js';
-
+import { postMessage } from '../actions/postMessage';
 interface Payload {
     new: MessageType;
 }
@@ -40,7 +40,12 @@ const ChatPage = () => {
         const channel = supabase
             .channel('room1')
             .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'message' }, (payload: Payload) => {
+                console.log('Received event:', payload);
                 setMessageList((prev) => [...prev, payload.new]);
+                console.log(payload.new);
+                if (payload.new.author === 'PATIENT') {
+                    getAIResponse(payload.new.content);
+                }
             })
             .subscribe();
 
@@ -49,6 +54,24 @@ const ChatPage = () => {
         };
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
+
+    const getAIResponse = async (input: string) => {
+        const response = await fetch('api/openai', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ input }),
+            cache: 'no-store',
+        });
+
+        const data = await response.json();
+        const item: ReqPostMessage = {
+            author: 'DOCTOR',
+            content: data.candidates[0].content.parts[0].text,
+        };
+        postMessage(item);
+    };
 
     async function getMessageList() {
         const response = await fetch('http://localhost:3000/api/message', {
